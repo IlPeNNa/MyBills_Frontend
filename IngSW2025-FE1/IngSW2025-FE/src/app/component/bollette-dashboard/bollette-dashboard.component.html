@@ -1,0 +1,214 @@
+<div class="dashboard-container">
+  <!-- Header con toolbar -->
+  <mat-toolbar color="primary" class="dashboard-header">
+    <span>MyBills.com - Status del cliente</span>
+  </mat-toolbar>
+
+  <div class="dashboard-content">
+    <!-- Sidebar con menu navigazione -->
+    <mat-sidenav-container class="sidenav-container">
+      <mat-sidenav mode="side" opened class="sidenav">
+        <mat-nav-list>
+          <h3 mat-subheader>Menu per la navigazione</h3>
+          <a mat-list-item [routerLink]="['/bollette']">
+            <mat-icon matListItemIcon>receipt</mat-icon>
+            <span matListItemTitle>Bollette</span>
+          </a>
+          <a mat-list-item [routerLink]="['/statistiche']">
+            <mat-icon matListItemIcon>analytics</mat-icon>
+            <span matListItemTitle>Statistiche</span>
+          </a>
+          <a mat-list-item [routerLink]="['/offerte']">
+            <mat-icon matListItemIcon>local_offer</mat-icon>
+            <span matListItemTitle>Offerte</span>
+          </a>
+        </mat-nav-list>
+      </mat-sidenav>
+
+      <mat-sidenav-content class="main-content">
+        <div class="content-grid">
+          <!-- Sezione grafico statistiche -->
+          <mat-card class="stats-card">
+            <mat-card-header>
+              <mat-card-title>Status del cliente</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="chart-container">
+                <!-- Grafico a torta CSS dinamico -->
+                <div class="pie-chart" [style.background]="getChartStyle()"></div>
+                
+                <!-- Legenda del grafico -->
+                <div class="chart-legend">
+                  <div class="chart-item">
+                    <div class="chart-color gas-color"></div>
+                    <span>Gas: {{statistiche.gas}}%</span>
+                  </div>
+                  <div class="chart-item">
+                    <div class="chart-color luce-color"></div>
+                    <span>Luce: {{statistiche.luce}}%</span>
+                  </div>
+                  <div class="chart-item">
+                    <div class="chart-color wifi-color"></div>
+                    <span>WiFi: {{statistiche.wifi}}%</span>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Sezione ricerca offerte -->
+          <mat-card class="offers-card">
+            <mat-card-header>
+              <mat-card-title>Ricerca delle nuove offerte</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <ul>
+                <li>Gas......</li>
+                <li>Luce......</li>
+                <li>WiFi......</li>
+              </ul>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Sezione filtri -->
+          <mat-card class="filters-card">
+            <mat-card-header>
+              <mat-card-title>Filtri</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="filters-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Da</mat-label>
+                  <input matInput [matDatepicker]="pickerDa" [(ngModel)]="filtroDataDa">
+                  <mat-datepicker-toggle matIconSuffix [for]="pickerDa"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerDa></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>A</mat-label>
+                  <input matInput [matDatepicker]="pickerA" [(ngModel)]="filtroDataA">
+                  <mat-datepicker-toggle matIconSuffix [for]="pickerA"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerA></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Tipo</mat-label>
+                  <mat-select [(ngModel)]="filtroTipo">
+                    <mat-option value="">Tutti</mat-option>
+                    <mat-option value="Gas">Gas</mat-option>
+                    <mat-option value="Luce">Luce</mat-option>
+                    <mat-option value="WiFi">WiFi</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Stato</mat-label>
+                  <mat-select [(ngModel)]="filtroPagato">
+                    <mat-option [value]="null">Tutti</mat-option>
+                    <mat-option [value]="true">Pagato</mat-option>
+                    <mat-option [value]="false">Da pagare</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <button mat-raised-button color="warn" (click)="clearFiltri()">
+                  <mat-icon>clear</mat-icon>
+                  Pulisci filtri
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Tabella bollette -->
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>Fatture da pagare</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <table mat-table [dataSource]="bolletteFiltrate" class="bollette-table">
+                <!-- Colonna Tipo -->
+                <ng-container matColumnDef="tipo">
+                  <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                  <td mat-cell *matCellDef="let bolletta">
+                    <mat-icon [class]="'icon-' + bolletta.tipo.toLowerCase()">
+                      {{getTipoIcon(bolletta.tipo)}}
+                    </mat-icon>
+                    {{bolletta.tipo}}
+                  </td>
+                </ng-container>
+
+                <!-- Colonna Fornitore -->
+                <ng-container matColumnDef="fornitore">
+                  <th mat-header-cell *matHeaderCellDef>Fatture da pagare</th>
+                  <td mat-cell *matCellDef="let bolletta">{{bolletta.fornitore}}</td>
+                </ng-container>
+
+                <!-- Colonna Importo -->
+                <ng-container matColumnDef="importo">
+                  <th mat-header-cell *matHeaderCellDef>Importo</th>
+                  <td mat-cell *matCellDef="let bolletta">€{{bolletta.importo}}</td>
+                </ng-container>
+
+                <!-- Colonna Scadenza -->
+                <ng-container matColumnDef="scadenza">
+                  <th mat-header-cell *matHeaderCellDef>Scadenza</th>
+                  <td mat-cell *matCellDef="let bolletta" 
+                      [class.scaduta]="isScaduta(bolletta)">
+                    {{bolletta.scadenza | date:'dd/MM/yyyy'}}
+                  </td>
+                </ng-container>
+
+                <!-- Colonna Stato -->
+                <ng-container matColumnDef="stato">
+                  <th mat-header-cell *matHeaderCellDef>Pagato</th>
+                  <td mat-cell *matCellDef="let bolletta">
+                    <mat-icon [color]="bolletta.pagato ? 'primary' : 'warn'">
+                      {{bolletta.pagato ? 'check_circle' : 'cancel'}}
+                    </mat-icon>
+                  </td>
+                </ng-container>
+
+                <!-- Colonna Azioni -->
+                <ng-container matColumnDef="azioni">
+                  <th mat-header-cell *matHeaderCellDef>Azioni</th>
+                  <td mat-cell *matCellDef="let bolletta">
+                    <button mat-icon-button 
+                            *ngIf="!bolletta.pagato" 
+                            (click)="marcaComePageto(bolletta)"
+                            matTooltip="Marca come pagato">
+                      <mat-icon color="primary">payment</mat-icon>
+                    </button>
+                    <span *ngIf="bolletta.pagato" class="pagato-label">
+                      Pagato il {{bolletta.dataPagamento | date:'dd/MM/yyyy'}}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Sezione storico pagamenti -->
+          <mat-card class="history-card">
+            <mat-card-header>
+              <mat-card-title>Storico recente</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <ul class="history-list">
+                <li *ngFor="let bolletta of bollette | slice:0:3">
+                  <span *ngIf="bolletta.pagato">
+                    - Bolletta {{bolletta.tipo}} pagata il {{bolletta.dataPagamento | date:'dd/MM/yyyy'}}
+                  </span>
+                  <span *ngIf="!bolletta.pagato" class="da-pagare">
+                    - Bolletta {{bolletta.tipo}} da pagare entro il {{bolletta.scadenza | date:'dd/MM/yyyy'}}
+                  </span>
+                </li>
+              </ul>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+</div>
