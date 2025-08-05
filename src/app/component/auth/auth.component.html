@@ -1,0 +1,185 @@
+<div class="auth-container">
+  <!-- Header -->
+  <div class="auth-header">
+    <p>MyBills</p>
+  </div>
+
+  <!-- Main content -->
+  <div class="auth-content">
+    <mat-card class="auth-card">
+      <mat-card-content>
+        <form (ngSubmit)="onSubmit()" #authForm="ngForm" novalidate>
+          
+          <!-- Campi per la registrazione (nome e cognome) -->
+          <div *ngIf="!isLoginMode" class="registration-fields">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nome</mat-label>
+              <input 
+                matInput 
+                [(ngModel)]="nome" 
+                name="nome"
+                #nomeField="ngModel"
+                required
+                autocomplete="given-name">
+              <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Cognome</mat-label>
+              <input 
+                matInput 
+                [(ngModel)]="cognome" 
+                name="cognome"
+                #cognomeField="ngModel"
+                required
+                autocomplete="family-name">
+              <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <!-- Email field (sempre presente) -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{isLoginMode ? 'Inserisci email' : 'Email'}}</mat-label>
+            <input 
+              matInput 
+              type="email"
+              [(ngModel)]="email" 
+              name="email"
+              #emailField="ngModel"
+              required
+              autocomplete="email">
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+
+          <!-- Password field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{isLoginMode ? 'Inserisci password' : 'Scegli password'}}</mat-label>
+            <input 
+              matInput 
+              type="password"
+              [(ngModel)]="password" 
+              name="password"
+              #passwordField="ngModel"
+              required
+              autocomplete="current-password">
+            <mat-icon matSuffix>lock</mat-icon>
+          </mat-form-field>
+
+          <!-- Buttons -->
+          <div class="auth-buttons">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              type="submit"
+              [disabled]="!authForm.form.valid"
+              class="auth-button">
+              {{isLoginMode ? 'Log in' : 'Registrati'}}
+            </button>
+
+            <button 
+              mat-raised-button 
+              color="accent" 
+              type="button"
+              (click)="toggleMode()"
+              class="auth-button">
+              {{isLoginMode ? 'Registrati' : 'Torna al Login'}}
+            </button>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Footer -->
+  <footer class="auth-footer">
+    <!-- Anteprima compatta (visibile di default) -->
+    <div class="footer-preview">
+      <div class="footer-preview-left">
+        <h4>MyBills</h4>
+        <p>&copy; 2025 - Gestione bollette intelligente</p>
+      </div>
+      
+      <div class="footer-preview-center">
+        <div class="preview-sections">
+          <span class="preview-section">Servizi</span>
+          <span class="preview-section">Supporto</span>
+          <span class="preview-section">Azienda</span>
+        </div>
+      </div>
+      
+      <div class="footer-preview-right">
+        <span>IT | EN</span>
+        <div class="expand-hint">
+          <span>Hover per maggiori info</span>
+          <mat-icon>expand_more</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenuto completo (visibile al hover) -->
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>MyBills</h4>
+        <p>La soluzione moderna per gestire le tue bollette con semplicità e controllo.</p>
+      </div>
+      
+      <div class="footer-section dropdown-section">
+        <div class="section-header">
+          <h4>Servizi</h4>
+        </div>
+        <ul class="dropdown-content">
+          <li><a href="#">Gestione Bollette</a></li>
+          <li><a href="#">Dashboard Analytics</a></li>
+          <li><a href="#">Ricerca Offerte</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section dropdown-section">
+        <div class="section-header">
+          <h4>Supporto</h4>
+        </div>
+        <ul class="dropdown-content">
+          <li><a href="#">Centro Assistenza</a></li>
+          <li><a href="#">Contattaci</a></li>
+          <li><a href="#">Tutorial</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section dropdown-section">
+        <div class="section-header">
+          <h4>Azienda</h4>
+        </div>
+        <ul class="dropdown-content">
+          <li><a href="#">Chi Siamo</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Termini di Servizio</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        <p>&copy; 2025 MyBills. All rights reserved.</p>
+        <p class="team-credits">Developed by Matteo Ambonati, Enrico Antiga, Alex Pennini</p>
+      </div>
+      
+      <div class="footer-bottom-right">
+        <div class="social-links">
+          <a href="#" aria-label="LinkedIn">
+            <mat-icon>business</mat-icon>
+          </a>
+          <a href="#" aria-label="Twitter">
+            <mat-icon>alternate_email</mat-icon>
+          </a>
+        </div>
+        <div class="language-selector">
+          <mat-icon>language</mat-icon>
+          <span>IT | EN</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
